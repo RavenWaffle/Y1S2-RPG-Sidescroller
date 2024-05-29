@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
+    [SerializeField] protected float _maxHealth;
     protected float health;
-    public bool canSetHealth = true; 
+
+    [HideInInspector] public bool canSetHealth = true; 
     public float GetHealth()
     {
         return health;
@@ -16,7 +18,7 @@ public class Character : MonoBehaviour
         if(canSetHealth)
         {
             health = change;
-            Debug.Log(health);
+            health = Mathf.Clamp(health, 0, _maxHealth);
         }
 
     }

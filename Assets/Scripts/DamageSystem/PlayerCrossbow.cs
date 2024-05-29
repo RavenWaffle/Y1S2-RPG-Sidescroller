@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 
-public class PlayerCrossbow : WeaponFramework
+public class PlayerCrossbow : Weapon
 {
     [SerializeField] private LayerMask[] targetMask;
+    [SerializeField] private PlayerCharacter playerCharacter;
 
     public PlayerCrossbow()
     {
-        damage = 66;
-        attackCooldown = 1f;
-        attackWait = 0;
     }
 
-    public override IEnumerator Attack()
+    protected override IEnumerator AttackCoroutine()
     {
-        Debug.Log("crossbow attack");
         if (!canAttack)
         {
             yield return null;
@@ -27,20 +24,19 @@ public class PlayerCrossbow : WeaponFramework
 
         //Single target
         RaycastHit2D hit = Physics2D.Raycast(this.transform.position, transform.forward, 25);
-        if (hit.collider != null)
+
+        if(hit)
         {
-            Debug.Log(hit.collider.name);
-        }
-        foreach (LayerMask layer in targetMask)
-        {
-            if(layer == 1 << hit.collider.gameObject.layer)
+            foreach (LayerMask layer in targetMask)
             {
-                Debug.Log(hit.collider.gameObject.name + "is target");
-                hit.collider.gameObject.TryGetComponent<Character>(out Character target);
-                target?.SetHealth(target.GetHealth() - damage);
+                if(layer == 1 << hit.collider.gameObject.layer)
+                {
+                
+                    hit.collider.gameObject.TryGetComponent<Character>(out Character target);
+                    target?.SetHealth(target.GetHealth() - damage);
+                }
             }
         }
-
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
 

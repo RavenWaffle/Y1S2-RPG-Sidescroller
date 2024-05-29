@@ -18,7 +18,6 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float _reloadWalkSpeed;
 
     private float originalSpeed;
-    //private bool isLoaded;
     private bool isRecoil;
     private float reloadHoldTime;
     private float recoilHoldTime;
@@ -39,65 +38,36 @@ public class PlayerWeapon : MonoBehaviour
 
     void Shooting()
     {
+        if(!crossbow.canAttack)
+        {
+            _playerMovement.SetSpeed(originalSpeed);
+            return;
+        }
+
         if(Input.GetKeyUp(KeyCode.Space) || !_groundChecker.isGrounded)
         {
             reloadHoldTime = 0;
             _playerMovement.SetSpeed(originalSpeed);
         }
 
-        if (Input.GetKey(KeyCode.Space) && _groundChecker.isGrounded)
+        if (Input.GetKey(KeyCode.Space) && _groundChecker.isGrounded && crossbow.canAttack)
         {
+            _playerMovement.SetSpeed(_reloadWalkSpeed);
             reloadHoldTime += Time.deltaTime;
             if (reloadHoldTime >= _reloadTime)
             {
-                StartCoroutine(crossbow.Attack());
+                crossbow.Attack();
                 isRecoil = true;
                 reloadHoldTime = 0;
-                _playerMovement.SetSpeed(originalSpeed);
-            }
 
-            _playerRB.velocity = Vector3.zero;
-            _playerMovement.SetSpeed(_reloadWalkSpeed);
+            }
         }
         else
         {
             reloadHoldTime = 0;
         }
-
-
-        /*
-        if (Input.GetKey(KeyCode.Space) && !isLoaded)
-        {
-            reloadHoldTime += Time.deltaTime;
-            if(reloadHoldTime >= _reloadTime)
-            {
-                isLoaded = true;
-
-            }
-
-            //don't allow move when reloading
-            _playerRB.velocity = Vector3.zero;
-            _playerMovement.SetSpeed(_reloadWalkSpeed);
-        }
-        else
-        {
-            _playerMovement.SetSpeed(originalSpeed);
-            reloadHoldTime = 0;
-        }
-        */
     }
-/*
-    void Shooting()
-    {
-        if (Input.GetKeyUp(KeyCode.Space) && isLoaded)
-        {
-        Debug.Log("PEW!");
-        StartCoroutine(crossbow.Attack());
-        isLoaded = false;
-        isRecoil = true;
-        }
-    }
-*/
+
     void Recoil()
     {
         if(isRecoil)
@@ -109,6 +79,7 @@ public class PlayerWeapon : MonoBehaviour
                 isRecoil = false;
             }
             _playerRB.AddForce(_recoilForce * -1 * crossbow.transform.forward, ForceMode2D.Force);
+            _playerMovement.SetSpeed(originalSpeed);
         }
     }
 }

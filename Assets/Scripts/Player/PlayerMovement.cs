@@ -33,15 +33,6 @@ public class PlayerMovement : MonoBehaviour
         {
             _playerRB.AddForce(JumpForce * new Vector2(0, 1), ForceMode2D.Impulse);
         }
-
-        if(Input.GetAxisRaw("Horizontal") == -1)
-        {
-            this.gameObject.transform.rotation = Quaternion.Euler(0, 180, 0);
-        }
-        if(Input.GetAxisRaw("Horizontal") == 1)
-        {
-            this.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
     }
 
     public float GetSpeed()
