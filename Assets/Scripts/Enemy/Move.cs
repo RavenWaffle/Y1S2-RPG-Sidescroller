@@ -6,12 +6,23 @@ public class Move : EnemyBehaviour
 {
     [SerializeField] float Speed = 10;
     [SerializeField] float Range = 10;
+
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        base.OnStateEnter(animator, stateInfo, layerIndex);
+        target = GameObject.Find("PlayerParent");
+    }
+
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        MoveTo(target.transform, Speed);
         if(DistanceToTarget(target.transform) <= Range)
         {
+            _thisRB.velocity = Vector2.zero;
             animator.SetTrigger("Attack");
+        }
+        else
+        {
+            MoveTo(target.transform, Speed);
         }
     }
 
